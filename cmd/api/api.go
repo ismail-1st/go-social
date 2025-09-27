@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	httpHandlers "social/internal/http"
 	"social/internal/store"
 
 	"github.com/go-chi/chi/v5"
@@ -42,9 +43,29 @@ func (app *application) mount() *chi.Mux {
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Route("/v1", func(r chi.Router) {
+	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
+
+		// mounting endpoints
+
+		// first we create a user handler instance
+		userHandler := httpHandlers.UserHandler{
+			Store: app.store.Users,
+		}
+
+		postHandler := httpHandlers.PostHandler{
+			Store: app.store.Posts,
+		}
+
+		r.Mount("/users", userHandler.UserRoutes())
+		r.Mount("/posts", postHandler.PostRoutes())
 	})
+
+	// Use chi.Walk to print the routes
+	// chi.Walk(r, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
+	// 	fmt.Printf("[%s] %s\n", method, route)
+	// 	return nil
+	// })
 
 	return r
 }

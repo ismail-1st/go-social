@@ -15,7 +15,7 @@ func (s *UsersStore) Create(ctx context.Context, user *models.User) error {
 	INSERT INTO users(
 		username,
 		email,
-		password,
+		password
 	) VALUES (
 	 	$1,
 		$2,
