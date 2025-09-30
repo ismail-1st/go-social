@@ -12,6 +12,7 @@ type Storage struct {
 	}
 	Users interface {
 		Create(context.Context, *models.User) error
+		Register(context.Context, *models.User) error
 	}
 }
 

@@ -1,22 +1,23 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"social/internal/models"
+	"social/internal/services"
 	"social/pkg/validation"
 
 	"github.com/go-chi/chi/v5"
-	"golang.org/x/crypto/bcrypt"
 )
 
-type UserStore interface {
-	Create(context.Context, *models.User) error
-}
+// type UserStore interface {
+// 	Create(context.Context, *models.User) error
+// 	// Register(context.Context, *models.User) error
+// }
 
 type UserHandler struct {
-	Store UserStore
+	// Store UserStore
+	Service *services.UserService
 }
 
 func (h UserHandler) UserRoutes() chi.Router {
@@ -50,15 +51,7 @@ func (h UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// second, we hash the user's password using bcrypt
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
-	}
-	user.Password = string(hashedPassword)
-
-	// third, call the store's create method
-	err = h.Store.Create(r.Context(), &user)
+	err = h.Service.Create(r.Context(), &user)
 	if err != nil {
 		validation.HandleDBError(w, err)
 		return

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	httpHandlers "social/internal/http"
+	"social/internal/services"
 	"social/internal/store"
 
 	"github.com/go-chi/chi/v5"
@@ -48,9 +49,12 @@ func (app *application) mount() *chi.Mux {
 
 		// mounting endpoints
 
-		// first we create a user handler instance
-		userHandler := httpHandlers.UserHandler{
+		userService := &services.UserService{
 			Store: app.store.Users,
+		}
+
+		userHandler := httpHandlers.UserHandler{
+			Service: userService,
 		}
 
 		postHandler := httpHandlers.PostHandler{
