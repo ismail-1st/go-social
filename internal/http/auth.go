@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"social/internal/dto"
 	"social/internal/services"
+	"social/pkg/response"
 	"social/pkg/validation"
 
 	"github.com/go-chi/chi/v5"
@@ -14,7 +15,7 @@ type AuthHandler struct {
 	Service *services.UserService
 }
 
-func (h AuthHandler) UserRoutes() chi.Router {
+func (h AuthHandler) AuthRoutes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Post("/register", h.RegisterUser)
@@ -44,7 +45,11 @@ func (h AuthHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// finally, we respond with a success message if all the checks are passed
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]int64{"id": createdUser.ID})
+	response.Created(w, "User registered successfully", map[string]interface{}{
+		"user": map[string]interface{}{
+			"id":       createdUser.ID,
+			"username": createdUser.Username,
+			"email":    createdUser.Email,
+		},
+	})
 }

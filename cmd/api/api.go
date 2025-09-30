@@ -49,6 +49,7 @@ func (app *application) mount() *chi.Mux {
 
 		// mounting endpoints
 
+		// USER
 		userService := &services.UserService{
 			Store: app.store.Users,
 		}
@@ -57,12 +58,22 @@ func (app *application) mount() *chi.Mux {
 			Service: userService,
 		}
 
+		// AUTH
+		authService := &services.AuthService{
+			Store: app.store.Users,
+		}
+
+		authHandler := httpHandlers.AuthHandler{
+			Service: (*services.UserService)(authService),
+		}
+
 		postHandler := httpHandlers.PostHandler{
 			Store: app.store.Posts,
 		}
 
 		r.Mount("/users", userHandler.UserRoutes())
 		r.Mount("/posts", postHandler.PostRoutes())
+		r.Mount("/auth", authHandler.AuthRoutes())
 	})
 
 	// Use chi.Walk to print the routes
