@@ -44,14 +44,21 @@ func HandleDBError(w http.ResponseWriter, err error) {
 	if pqErr, ok := err.(*pq.Error); ok {
 		switch pqErr.Code {
 		case "23505": // unique_violation
-			// Extract column name from constraint
 			field := parseConstraint(pqErr.Constraint)
-			SendDBError(w, field, strings.Title(field)+" already exists")
+			WriteJSON(w, http.StatusConflict, map[string]map[string]string{
+				"errors": {
+					field: strings.Title(field) + " already exists",
+				},
+			})
 			return
 
 		case "23503": // foreign_key_violation
 			field := parseConstraint(pqErr.Constraint)
-			SendDBError(w, field, strings.Title(field)+" does not exist")
+			WriteJSON(w, http.StatusConflict, map[string]map[string]string{
+				"errors": {
+					field: strings.Title(field) + " does not exist",
+				},
+			})
 			return
 		}
 	}
