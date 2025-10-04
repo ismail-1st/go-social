@@ -1,18 +1,12 @@
 package store
 
 import (
-	"context"
 	"database/sql"
-	"social/internal/models"
 )
 
 type Storage struct {
-	Posts interface {
-		Create(context.Context, *models.Post) error
-	}
-	Users interface {
-		Create(context.Context, *models.User) error
-	}
+	Posts interface{ PostRepository }
+	Users interface{ UserRepository }
 }
 
 func NewStorage(db *sql.DB) Storage {

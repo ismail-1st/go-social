@@ -6,6 +6,7 @@ import (
 	"time"
 
 	httpHandlers "social/internal/http"
+	"social/internal/services"
 	"social/internal/store"
 
 	"github.com/go-chi/chi/v5"
@@ -48,9 +49,22 @@ func (app *application) mount() *chi.Mux {
 
 		// mounting endpoints
 
-		// first we create a user handler instance
-		userHandler := httpHandlers.UserHandler{
+		// USER
+		userService := &services.UserService{
 			Store: app.store.Users,
+		}
+
+		userHandler := httpHandlers.UserHandler{
+			Service: userService,
+		}
+
+		// AUTH
+		authService := &services.AuthService{
+			Store: app.store.Users,
+		}
+
+		authHandler := httpHandlers.AuthHandler{
+			Service: (*services.AuthService)(authService),
 		}
 
 		postHandler := httpHandlers.PostHandler{
@@ -59,6 +73,7 @@ func (app *application) mount() *chi.Mux {
 
 		r.Mount("/users", userHandler.UserRoutes())
 		r.Mount("/posts", postHandler.PostRoutes())
+		r.Mount("/auth", authHandler.AuthRoutes())
 	})
 
 	// Use chi.Walk to print the routes

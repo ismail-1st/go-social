@@ -3,6 +3,7 @@ package validation
 import (
 	"encoding/json"
 	"net/http"
+	"social/pkg/response"
 	"strings"
 
 	"github.com/lib/pq"
@@ -44,20 +45,25 @@ func HandleDBError(w http.ResponseWriter, err error) {
 	if pqErr, ok := err.(*pq.Error); ok {
 		switch pqErr.Code {
 		case "23505": // unique_violation
-			// Extract column name from constraint
 			field := parseConstraint(pqErr.Constraint)
-			SendDBError(w, field, strings.Title(field)+" already exists")
+			response.Error(w, http.StatusConflict, "Duplicate entry", map[string]string{
+				field: strings.Title(field) + " already exists",
+			})
 			return
 
 		case "23503": // foreign_key_violation
 			field := parseConstraint(pqErr.Constraint)
-			SendDBError(w, field, strings.Title(field)+" does not exist")
+			response.Error(w, http.StatusBadRequest, "Invalid reference", map[string]string{
+				field: strings.Title(field) + " does not exist",
+			})
 			return
 		}
 	}
 
-	// fallback: unexpected DB error
-	SendServerError(w, "Database error: "+err.Error())
+	// fallback
+	response.Error(w, http.StatusInternalServerError, "Database error", map[string]string{
+		"db": err.Error(),
+	})
 }
 
 // parseConstraint extracts field name from constraint string
