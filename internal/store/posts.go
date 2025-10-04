@@ -8,6 +8,10 @@ import (
 	"github.com/lib/pq"
 )
 
+type PostRepository interface {
+	Create(context.Context, *models.Post) error
+}
+
 type PostStore struct {
 	db *sql.DB
 }

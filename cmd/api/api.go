@@ -64,7 +64,7 @@ func (app *application) mount() *chi.Mux {
 		}
 
 		authHandler := httpHandlers.AuthHandler{
-			Service: (*services.UserService)(authService),
+			Service: (*services.AuthService)(authService),
 		}
 
 		postHandler := httpHandlers.PostHandler{
