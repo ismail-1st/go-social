@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	Create(context.Context, *models.User) error
+	Register(context.Context, *models.User) error
 	Login(context.Context, *dto.UserLoginDetail) (*dto.UserLoginDetail, error)
 }
 
@@ -17,7 +17,7 @@ type UsersStore struct {
 	db *sql.DB
 }
 
-func (s *UsersStore) Create(ctx context.Context, user *models.User) error {
+func (s *UsersStore) Register(ctx context.Context, user *models.User) error {
 	query := `
 	INSERT INTO users(
 		username,
@@ -64,4 +64,21 @@ func (s *UsersStore) Login(ctx context.Context, user *dto.UserLoginDetail) (*dto
 	}
 
 	return &resp, nil
+}
+
+func (s *UsersStore) GetUserByEmail(ctx context.Context, email string) (*dto.UserInfo, error) {
+	query := `
+		SELECT id, email FROM users WHERE email=$1
+	`
+	var user dto.UserInfo
+	err := s.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Email)
+	return &user, err
+}
+
+func (s *UsersStore) UpdatePassword(ctx context.Context, userID int64, newHashed string) error {
+	query := `
+		UPDATE users SET password=$1 WHERE id=$2
+	`
+	_, err := s.db.ExecContext(ctx, query, newHashed, userID)
+	return err
 }

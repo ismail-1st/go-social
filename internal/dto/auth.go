@@ -1,5 +1,10 @@
 package dto
 
+type UserInfo struct {
+	ID    int64  `json:"id"`
+	Email string `json:"email"`
+}
+
 type UserRegister struct {
 	Username string `json:"username" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
@@ -28,4 +33,11 @@ type UserLoginResponse struct {
 	Email        string `json:"email"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+}
+
+type ForgetPassword struct {
+	Email string `json:"email"`
+}
+
+type ForgetPasswordResponse struct {
 }

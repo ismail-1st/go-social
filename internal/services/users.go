@@ -13,7 +13,7 @@ type UserService struct {
 	Store store.UserRepository
 }
 
-func (s UserService) Create(ctx context.Context, user *dto.UserRegister) (*models.User, error) {
+func (s UserService) Register(ctx context.Context, user *dto.UserRegister) (*models.User, error) {
 
 	// hash password
 	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -27,7 +27,7 @@ func (s UserService) Create(ctx context.Context, user *dto.UserRegister) (*model
 		Password: string(hashed),
 	}
 
-	if err := s.Store.Create(ctx, &u); err != nil {
+	if err := s.Store.Register(ctx, &u); err != nil {
 		return nil, err
 	}
 

@@ -29,7 +29,7 @@ func (s AuthService) Register(ctx context.Context, user *dto.UserRegister) (*mod
 		Password: string(hashed),
 	}
 
-	if err := s.Store.Create(ctx, &u); err != nil {
+	if err := s.Store.Register(ctx, &u); err != nil {
 		return nil, err
 	}
 
