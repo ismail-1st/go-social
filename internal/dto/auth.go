@@ -1,8 +1,9 @@
 package dto
 
 type UserInfo struct {
-	ID    int64  `json:"id"`
-	Email string `json:"email"`
+	ID       int64  `json:"id"`
+	Email    string `json:"email"`
+	Username string `json:username`
 }
 
 type UserRegister struct {

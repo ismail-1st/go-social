@@ -27,12 +27,7 @@ func (h AuthHandler) AuthRoutes() chi.Router {
 func (h AuthHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// first, we decode the request body into a new user model
 	user := dto.UserRegister{}
-
-	if ok := json.DecodeStrict(w, r, &user); !ok {
-		return
-	}
-
-	if validation.ValidateAndRespond(w, user) {
+	if !json.ParseAndValidate(w, r, &user) {
 		return
 	}
 
@@ -54,12 +49,7 @@ func (h AuthHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 func (h AuthHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	user := dto.UserLogin{}
-
-	if ok := json.DecodeStrict(w, r, &user); !ok {
-		return
-	}
-
-	if validation.ValidateAndRespond(w, user) {
+	if !json.ParseAndValidate(w, r, &user) {
 		return
 	}
 
@@ -85,3 +75,23 @@ func (h AuthHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 }
+
+func (h UserHandler) GetUserByEmail(w http.ResponseWriter, r *http.Request) {
+	user := dto.UserLoginDetail{}
+
+	if !json.ParseAndValidate(w, r, &user) {
+		return
+	}
+
+	// gottenUser, err := h.Service.GetUserByEmail()
+}
+
+// func (h AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+// 	user := dto.ForgetPassword{}
+// 	if !json.ParseAndValidate(w, r, &user) {
+// 		return
+// 	}
+
+// 	err, gottenUser := h.Service.GetUserByEmail(user.Email)
+
+// }

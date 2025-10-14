@@ -11,7 +11,7 @@ services:
       - .:/app      # only needed for dev (so Air sees changes)
       - /app/tmp
     ports:
-      - "8080:8080"
+      - "3000:3000"
     env_file:
       - .env
     depends_on:

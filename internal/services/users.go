@@ -33,3 +33,8 @@ func (s UserService) Register(ctx context.Context, user *dto.UserRegister) (*mod
 
 	return &u, nil
 }
+
+func (s UserService) GetUserByEmail(ctx context.Context, email string) (*dto.UserInfo, error) {
+	user, err := s.Store.GetUserByEmail(ctx, email)
+	return user, err
+}

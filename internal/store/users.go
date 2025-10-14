@@ -11,6 +11,8 @@ import (
 type UserRepository interface {
 	Register(context.Context, *models.User) error
 	Login(context.Context, *dto.UserLoginDetail) (*dto.UserLoginDetail, error)
+	GetUserByEmail(ctx context.Context, email string) (*dto.UserInfo, error)
+	UpdatePassword(ctx context.Context, userID int64, newHashed string) error
 }
 
 type UsersStore struct {

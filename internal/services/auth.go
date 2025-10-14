@@ -66,3 +66,5 @@ func (s AuthService) Login(ctx context.Context, user *dto.UserLogin) (*dto.UserL
 		RefreshToken: refreshToken,
 	}, nil
 }
+
+// func (s AuthService) ResetPassword(ctx context.Context, email string) (*dto.ForgetPasswordResponse)
